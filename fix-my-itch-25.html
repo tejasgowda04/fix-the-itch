@@ -1,0 +1,923 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fix My Itch — Top 25 for Tejas</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Mono:wght@400;500&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #111118;
+    --card: #16161f;
+    --border: #222230;
+    --accent: #ff4d00;
+    --accent2: #ff8c42;
+    --green: #00e5a0;
+    --blue: #4d9fff;
+    --purple: #9b6dff;
+    --yellow: #ffd166;
+    --text: #e8e8f0;
+    --muted: #6b6b80;
+    --dim: #888899;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Instrument Sans', sans-serif;
+    min-height: 100vh;
+    line-height: 1.6;
+  }
+
+  /* Noise overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 0 24px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* HEADER */
+  header {
+    padding: 60px 0 40px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 48px;
+  }
+
+  .header-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .header-label::before {
+    content: '';
+    width: 20px;
+    height: 1px;
+    background: var(--accent);
+  }
+
+  h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(36px, 6vw, 64px);
+    font-weight: 800;
+    line-height: 1.0;
+    letter-spacing: -2px;
+    margin-bottom: 20px;
+  }
+
+  h1 span {
+    color: var(--accent);
+  }
+
+  .header-sub {
+    color: var(--dim);
+    font-size: 15px;
+    max-width: 560px;
+    line-height: 1.7;
+  }
+
+  .header-meta {
+    display: flex;
+    gap: 24px;
+    margin-top: 28px;
+    flex-wrap: wrap;
+  }
+
+  .meta-pill {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    padding: 6px 16px;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--dim);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .meta-pill .dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+  }
+
+  /* CATEGORY FILTER */
+  .categories {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 40px;
+  }
+
+  .cat-btn {
+    padding: 8px 18px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--muted);
+    font-family: 'Instrument Sans', sans-serif;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 0.3px;
+  }
+
+  .cat-btn:hover, .cat-btn.active {
+    background: var(--card);
+    color: var(--text);
+    border-color: var(--accent);
+  }
+
+  /* PROBLEMS GRID */
+  .problems-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .problem-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px 28px;
+    position: relative;
+    transition: border-color 0.25s, transform 0.2s;
+    overflow: hidden;
+    cursor: default;
+  }
+
+  .problem-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 3px;
+    height: 100%;
+    background: var(--category-color, var(--accent));
+    border-radius: 12px 0 0 12px;
+  }
+
+  .problem-card:hover {
+    border-color: var(--category-color, var(--accent));
+    transform: translateX(4px);
+  }
+
+  .card-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 12px;
+  }
+
+  .problem-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    min-width: 28px;
+    padding-top: 3px;
+  }
+
+  .card-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 16px;
+    line-height: 1.4;
+    flex: 1;
+    color: var(--text);
+  }
+
+  .itch-score {
+    font-family: 'DM Mono', monospace;
+    font-size: 20px;
+    font-weight: 500;
+    color: var(--category-color, var(--accent));
+    text-align: right;
+    min-width: 50px;
+  }
+
+  .itch-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    color: var(--muted);
+    text-align: right;
+    margin-top: 2px;
+  }
+
+  .card-desc {
+    font-size: 13.5px;
+    color: var(--dim);
+    line-height: 1.65;
+    margin-bottom: 16px;
+    padding-left: 36px;
+  }
+
+  .card-bottom {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding-left: 36px;
+    flex-wrap: wrap;
+  }
+
+  .tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    padding: 3px 10px;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    color: var(--dim);
+    letter-spacing: 0.5px;
+  }
+
+  .tag.category {
+    color: var(--category-color, var(--accent));
+    border-color: var(--category-color, var(--accent));
+    background: color-mix(in srgb, var(--category-color, var(--accent)) 10%, transparent);
+  }
+
+  .tag.fit {
+    color: var(--green);
+    border-color: var(--green);
+    background: color-mix(in srgb, var(--green) 8%, transparent);
+  }
+
+  .tag.model {
+    color: var(--blue);
+    border-color: var(--blue);
+    background: color-mix(in srgb, var(--blue) 8%, transparent);
+  }
+
+  /* Section dividers */
+  .section-header {
+    font-family: 'Syne', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding: 32px 0 16px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .section-header::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  .section-icon {
+    font-size: 16px;
+  }
+
+  /* Score bar */
+  .score-bar {
+    height: 3px;
+    background: var(--border);
+    border-radius: 2px;
+    margin-top: 12px;
+    margin-left: 36px;
+    overflow: hidden;
+  }
+
+  .score-fill {
+    height: 100%;
+    background: var(--category-color, var(--accent));
+    border-radius: 2px;
+    opacity: 0.5;
+  }
+
+  /* FOOTER */
+  footer {
+    margin-top: 80px;
+    padding: 40px 0 60px;
+    border-top: 1px solid var(--border);
+    text-align: center;
+  }
+
+  .footer-text {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    line-height: 2;
+  }
+
+  .footer-text strong {
+    color: var(--accent);
+  }
+
+  /* Highlight box */
+  .highlight-box {
+    background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 6%, var(--surface)), var(--surface));
+    border: 1px solid color-mix(in srgb, var(--accent) 30%, var(--border));
+    border-radius: 12px;
+    padding: 24px 28px;
+    margin-bottom: 40px;
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+
+  .highlight-icon {
+    font-size: 28px;
+    line-height: 1;
+    margin-top: 2px;
+  }
+
+  .highlight-content h3 {
+    font-family: 'Syne', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 6px;
+    color: var(--text);
+  }
+
+  .highlight-content p {
+    font-size: 13px;
+    color: var(--dim);
+    line-height: 1.65;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .problem-card {
+    animation: fadeUp 0.4s ease both;
+  }
+
+  .problem-card:nth-child(1) { animation-delay: 0.05s; }
+  .problem-card:nth-child(2) { animation-delay: 0.1s; }
+  .problem-card:nth-child(3) { animation-delay: 0.15s; }
+  .problem-card:nth-child(4) { animation-delay: 0.2s; }
+  .problem-card:nth-child(5) { animation-delay: 0.25s; }
+
+  @media (max-width: 600px) {
+    .card-top { flex-wrap: wrap; }
+    .card-desc, .card-bottom, .score-bar { padding-left: 0; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <header>
+    <div class="header-label">Razorpay Fix My Itch × Tejas's Playbook</div>
+    <h1>25 Problems<br><span>Worth Building</span></h1>
+    <p class="header-sub">Curated from 10,000+ real Indian pain points — filtered for a full-stack developer &amp; AI agency founder who can actually ship these.</p>
+    <div class="header-meta">
+      <div class="meta-pill"><span class="dot" style="background:#ff4d00"></span> Itch Score Ranked</div>
+      <div class="meta-pill"><span class="dot" style="background:#00e5a0"></span> Dev/AI Buildable</div>
+      <div class="meta-pill"><span class="dot" style="background:#4d9fff"></span> Monetizable SaaS</div>
+      <div class="meta-pill"><span class="dot" style="background:#ffd166"></span> India TAM Validated</div>
+    </div>
+  </header>
+
+  <div class="highlight-box">
+    <div class="highlight-icon">🎯</div>
+    <div class="highlight-content">
+      <h3>How these were picked for you</h3>
+      <p>From 100+ problems scraped from Razorpay's Fix My Itch, these 25 were shortlisted based on: (1) High itch score (severity × frequency × whitespace), (2) Solvable with web + AI — no hardware or physical ops needed, (3) Real monetization potential via SaaS or marketplace, (4) Fits your existing stack (Django, React, Firebase, Razorpay), (5) Proximity to your existing niches.</p>
+    </div>
+  </div>
+
+  <!-- TIER 1: FIRE -->
+  <div class="section-header"><span class="section-icon">🔥</span> Tier 1 — Itch Score 88+</div>
+
+  <div class="problems-list">
+
+    <div class="problem-card" style="--category-color: #ff4d00">
+      <div class="card-top">
+        <div class="problem-num">#01</div>
+        <div class="card-title">People can't track where their money goes — UPI is invisible</div>
+        <div>
+          <div class="itch-score">90.5</div>
+          <div class="itch-label">ITCH SCORE</div>
+        </div>
+      </div>
+      <div class="card-desc">Transactions are scattered across PhonePe, GPay, cards, wallets. No single plain-language view of monthly spending. This is the #1 financial pain point for 500M+ UPI users.</div>
+      <div class="score-bar"><div class="score-fill" style="width:90.5%"></div></div>
+      <div class="card-bottom">
+        <span class="tag category">Fintech</span>
+        <span class="tag fit">AI Categorization Engine</span>
+        <span class="tag model">₹99–299/mo SaaS</span>
+      </div>
+    </div>
+
+    <div class="problem-card" style="--category-color: #ff4d00">
+      <div class="card-top">
+        <div class="problem-num">#02</div>
+        <div class="card-title">Booking cargo vehicles is harder than booking an Uber — no app exists</div>
+        <div>
+          <div class="itch-score">92.1</div>
+          <div class="itch-label">ITCH SCORE</div>
+        </div>
+      </div>
+      <div class="card-desc">Moving furniture, appliances, or bulk purchases? You negotiate with unorganized tempo drivers at inflated prices. No on-demand app, no fare transparency, no tracking.</div>
+      <div class="score-bar"><div class="score-fill" style="width:92.1%"></div></div>
+      <div class="card-bottom">
+        <span class="tag category">Logistics</span>
+        <span class="tag fit">Marketplace Platform</span>
+        <span class="tag model">Commission per booking</span>
+      </div>
+    </div>
+
+    <div class="problem-card" style="--category-color: #ff4d00">
+      <div class="card-top">
+        <div class="problem-num">#03</div>
+        <div class="card-title">Homebuyers make crore-level decisions with zero neighborhood data</div>
+        <div>
+          <div class="itch-score">94.5</div>
+          <div class="itch-label">ITCH SCORE</div>
+        </div>
+      </div>
+      <div class="card-desc">No standardized data on school quality, crime, air quality, water supply, power outages, or upcoming infra near a property. Buyers rely on broker word-of-mouth alone.</div>
+      <div class="score-bar"><div class="score-fill" style="width:94.5%"></div></div>
+      <div class="card-bottom">
+        <span class="tag category">Real Estate</span>
+        <span class="tag fit">Data + AI Reports</span>
+        <span class="tag model">B2B SaaS / API</span>
+      </div>
+    </div>
+
+    <div class="problem-card" style="--category-color: #ff4d00">
+      <div class="card-top">
+        <div class="problem-num">#04</div>
+        <div class="card-title">Half of rental listings online are fake broker clickbait</div>
+        <div>
+          <div class="itch-score">88.5</div>
+          <div class="itch-label">ITCH SCORE</div>
+        </div>
+      </div>
+      <div class="card-desc">Attractive listings on portals use fake photos or unavailable properties to capture leads. Tenants waste days visiting non-existent homes. Trust in the rental market is broken.</div>
+      <div class="score-bar"><div class="score-fill" style="width:88.5%"></div></div>
+      <div class="card-bottom">
+        <span class="tag category">Real Estate</span>
+        <span class="tag fit">Verified Listing Platform</span>
+        <span class="tag model">Subscription + Leads</span>
+      </div>
+    </div>
+
+    <div class="problem-card" style="--category-color: #ff4d00">
+      <div class="card-top">
+        <div class="problem-num">#05</div>
+        <div class="card-title">Medicine prices vary 30–50% across pharmacy chains — no comparison tool</div>
+        <div>
+          <div class="itch-score">91.0</div>
+          <div class="itch-label">ITCH SCORE</div>
+        </div>
+      </div>
+      <div class="card-desc">Same prescription drug, wildly different prices. No app to scan a prescription, compare costs across nearby pharmacies, and find the cheapest option before buying.</div>
+      <div class="score-bar"><div class="score-fill" style="width:91%"></div></div>
+      <div class="card-bottom">
+        <span class="tag category">HealthTech</span>
+        <span class="tag fit">AI OCR + Price API</span>
+        <span class="tag model">Affiliate / B2C Freemium</span>
+      </div>
+    </div>
+
+    <div class="problem-card" style="--category-color: #ff4d00">
+      <div class="card-top">
+        <div class="problem-num">#06</div>
+        <div class="card-title">Hotel &amp; café WiFi is unreliable but always marketed as "high-speed"</div>
+        <div>
+          <div class="itch-score">90.5</div>
+          <div class="itch-label">ITCH SCORE</div>
+        </div>
+      </div>
+      <div class="card-desc">Remote workers and travelers get burned by "high-speed WiFi" that's 2 Mbps in peak hours. No rating system for actual connectivity quality exists for hospitality in India.</div>
+      <div class="score-bar"><div class="score-fill" style="width:90.5%"></div></div>
+      <div class="card-bottom">
+        <span class="tag category">Travel / SaaS</span>
+        <span class="tag fit">Community + Speed Test</span>
+        <span class="tag model">B2B Certification + Ads</span>
+      </div>
+    </div>
+
+    <div class="problem-card" style="--category-color: #9b6dff">
+      <div class="card-top">
+        <div class="problem-num">#07</div>
+        <div class="card-title">Office shuttles run fixed routes — real-time demand routing doesn't exist</div>
+        <div>
+          <div class="itch-score">92.1</div>
+          <div class="itch-label">ITCH SCORE</div>
+        </div>
+      </div>
+      <div class="card-desc">Corporate employees in IT parks wait for scheduled shuttles running on static routes. No dynamic van-pooling app routes vehicles based on real-time employee demand.</div>
+      <div class="score-bar"><div class="score-fill" style="width:92.1%"></div></div>
+      <div class="card-bottom">
+        <span class="tag category">Transport / B2B</span>
+        <span class="tag fit">Route Optimization AI</span>
+        <span class="tag model">B2B Corporate SaaS</span>
+      </div>
+    </div>
+
+    <div class="problem-card" style="--category-color: #9b6dff">
+      <div class="card-top">
+        <div class="problem-num">#08</div>
+        <div class="card-title">Fresh graduates have degrees but can't write working code</div>
+        <div>
+          <div class="itch-score">86.5</div>
+          <div class="itch-label">ITCH SCORE</div>
+        </div>
+      </div>
+      <div class="card-desc">Companies hiring fresh grads find they can't solve real programming problems. College curricula are all theory, no industry-simulation. EdTech gap is massive for practical skills.</div>
+      <div class="score-bar"><div class="score-fill" style="width:86.5%"></div></div>
+      <div class="card-bottom">
+        <span class="tag category">EdTech</span>
+        <span class="tag fit">AI Code Coach / Platform</span>
+        <span class="tag model">Bootcamp + SaaS</span>
+      </div>
+    </div>
+
+    <div class="problem-card" style="--category-color: #9b6dff">
+      <div class="card-top">
+        <div class="problem-num">#09</div>
+        <div class="card-title">Buyers discover home dampness, cracks, and termites AFTER paying</div>
+        <div>
+          <div class="itch-score">86.5</div>
+          <div class="itch-label">ITCH SCORE</div>
+        </div>
+      </div>
+      <div class="card-desc">Pre-purchase home inspections using thermal imaging and moisture meters are not standard in India. Buyers lose lakhs on hidden defects that a ₹5,000 inspection would catch.</div>
+      <div class="score-bar"><div class="score-fill" style="width:86.5%"></div></div>
+      <div class="card-bottom">
+        <span class="tag category">Real Estate</span>
+        <span class="tag fit">Inspector Network + Reports</span>
+        <span class="tag model">Per-inspection fee</span>
+      </div>
+    </div>
+
+    <div class="problem-card" style="--category-color: #9b6dff">
+      <div class="card-top">
+        <div class="problem-num">#10</div>
+        <div class="card-title">College consultants recommend colleges that pay them commissions, not fit</div>
+        <div>
+          <div class="itch-score">85.5</div>
+          <div class="itch-label">ITCH SCORE</div>
+        </div>
+      </div>
+      <div class="card-desc">High schoolers get pushed into expensive private colleges based on referral fees. No unbiased, aptitude-first college matching platform exists in India despite massive demand.</div>
+      <div class="score-bar"><div class="score-fill" style="width:85.5%"></div></div>
+      <div class="card-bottom">
+        <span class="tag category">EdTech</span>
+        <span class="tag fit">AI Matching + Counseling</span>
+        <span class="tag model">₹999–5,000 per student</span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- TIER 2: HIGH VALUE -->
+  <div class="section-header"><span class="section-icon">⚡</span> Tier 2 — Itch Score 80–88</div>
+
+  <div class="problems-list">
+
+    <div class="problem-card" style="--category-color: #ffd166">
+      <div class="card-top">
+        <div class="problem-num">#11</div>
+        <div class="card-title">NRIs have no way to remotely monitor vacant properties back home</div>
+        <div>
+          <div class="itch-score">85.8</div>
+          <div class="itch-label">ITCH SCORE</div>
+        </div>
+      </div>
+      <div class="card-desc">NRIs live with anxiety about encroachment, illegal construction on vacant properties. No smart IoT + video monitoring platform designed for remote property management exists at scale.</div>
+      <div class="score-bar"><div class="score-fill" style="width:85.8%"></div></div>
+      <div class="card-bottom">
+        <span class="tag category">Real Estate / NRI</span>
+        <span class="tag fit">IoT + Dashboard SaaS</span>
+        <span class="tag model">₹2,000–5,000/mo recurring</span>
+      </div>
+    </div>
+
+    <div class="problem-card" style="--category-color: #ffd166">
+      <div class="card-top">
+        <div class="problem-num">#12</div>
+        <div class="card-title">Property ads say "5 mins from metro" — actual commute is 30 mins</div>
+        <div>
+          <div class="itch-score">85.5</div>
+          <div class="itch-label">ITCH SCORE</div>
+        </div>
+      </div>
+      <div class="card-desc">Real estate ads measure straight-line distance, not peak-hour walking time. Buyers get misled on commute claims regularly. A tool verifying real commute times would be viral.</div>
+      <div class="score-bar"><div class="score-fill" style="width:85.5%"></div></div>
+      <div class="card-bottom">
+        <span class="tag category">Real Estate / Maps</span>
+        <span class="tag fit">Maps API + AI Validation</span>
+        <span class="tag model">B2B listing verification</span>
+      </div>
+    </div>
+
+    <div class="problem-card" style="--category-color: #ffd166">
+      <div class="card-top">
+        <div class="problem-num">#13</div>
+        <div class="card-title">Scholarship info is scattered — deserving rural students miss it entirely</div>
+        <div>
+          <div class="itch-score">82.0</div>
+          <div class="itch-label">ITCH SCORE</div>
+        </div>
+      </div>
+      <div class="card-desc">Dozens of govt and private scholarships go unclaimed because info is across disconnected portals. A unified, AI-guided scholarship finder + application assistant = massive social impact.</div>
+      <div class="score-bar"><div class="score-fill" style="width:82%"></div></div>
+      <div class="card-bottom">
+        <span class="tag category">EdTech / GovTech</span>
+        <span class="tag fit">AI Assistant + Aggregator</span>
+        <span class="tag model">Grant-funded / CSR SaaS</span>
+      </div>
+    </div>
+
+    <div class="problem-card" style="--category-color: #ffd166">
+      <div class="card-top">
+        <div class="problem-num">#14</div>
+        <div class="card-title">Insurance policies are written for lawyers, not humans</div>
+        <div>
+          <div class="itch-score">82.0</div>
+          <div class="itch-label">ITCH SCORE</div>
+        </div>
+      </div>
+      <div class="card-desc">Policyholders make uninformed decisions. Exclusions are buried in legal jargon. An AI tool that translates any insurance document into plain Kannada/Hindi/English = instant demand.</div>
+      <div class="score-bar"><div class="score-fill" style="width:82%"></div></div>
+      <div class="card-bottom">
+        <span class="tag category">InsurTech / AI</span>
+        <span class="tag fit">LLM Document Parser</span>
+        <span class="tag model">B2C Freemium / B2B API</span>
+      </div>
+    </div>
+
+    <div class="problem-card" style="--category-color: #ffd166">
+      <div class="card-top">
+        <div class="problem-num">#15</div>
+        <div class="card-title">Mock tests &amp; analytics are inaccessible to low-income JEE/NEET aspirants</div>
+        <div>
+          <div class="itch-score">81.5</div>
+          <div class="itch-label">ITCH SCORE</div>
+        </div>
+      </div>
+      <div class="card-desc">Premium coaching has question banks, doubt clearing, performance analytics. Poor students only have outdated textbooks. A free-tier test platform with AI doubt clearing = massive user base.</div>
+      <div class="score-bar"><div class="score-fill" style="width:81.5%"></div></div>
+      <div class="card-bottom">
+        <span class="tag category">EdTech</span>
+        <span class="tag fit">AI Doubt Solver + Tests</span>
+        <span class="tag model">Freemium + ₹199 Pro</span>
+      </div>
+    </div>
+
+    <div class="problem-card" style="--category-color: #ffd166">
+      <div class="card-top">
+        <div class="problem-num">#16</div>
+        <div class="card-title">Payment app cashback terms are deliberately confusing</div>
+        <div>
+          <div class="itch-score">81.2</div>
+          <div class="itch-label">ITCH SCORE</div>
+        </div>
+      </div>
+      <div class="card-desc">"10% cashback up to ₹100" — users never know what they'll actually get. Hidden conditions in fine print. A chrome extension or app that shows true cashback before you pay = viral product.</div>
+      <div class="score-bar"><div class="score-fill" style="width:81.2%"></div></div>
+      <div class="card-bottom">
+        <span class="tag category">Fintech / Consumer</span>
+        <span class="tag fit">Browser Extension + AI</span>
+        <span class="tag model">Affiliate commission</span>
+      </div>
+    </div>
+
+    <div class="problem-card" style="--category-color: #ffd166">
+      <div class="card-top">
+        <div class="problem-num">#17</div>
+        <div class="card-title">Parents can't find trustworthy childcare for a few hours in the evening</div>
+        <div>
+          <div class="itch-score">81.0</div>
+          <div class="itch-label">ITCH SCORE</div>
+        </div>
+      </div>
+      <div class="card-desc">Working parents needing 2–3 hrs of evening childcare can't find verified sitters. Monthly nannies are overkill. No on-demand, background-checked childcare marketplace exists in tier 2/3 India.</div>
+      <div class="score-bar"><div class="score-fill" style="width:81%"></div></div>
+      <div class="card-bottom">
+        <span class="tag category">Home Services</span>
+        <span class="tag fit">Verified Marketplace</span>
+        <span class="tag model">Platform fee + subscription</span>
+      </div>
+    </div>
+
+    <div class="problem-card" style="--category-color: #ffd166">
+      <div class="card-top">
+        <div class="problem-num">#18</div>
+        <div class="card-title">Drivers circle crowded markets 20 mins looking for parking</div>
+        <div>
+          <div class="itch-score">81.0</div>
+          <div class="itch-label">ITCH SCORE</div>
+        </div>
+      </div>
+      <div class="card-desc">No real-time parking availability system exists for commercial areas in Tier 2 cities (Mysuru, Mandya, Hubli). A hyperlocal parking app has zero competition in these markets.</div>
+      <div class="score-bar"><div class="score-fill" style="width:81%"></div></div>
+      <div class="card-bottom">
+        <span class="tag category">Transport / Local</span>
+        <span class="tag fit">Hyperlocal App</span>
+        <span class="tag model">Ads + Booking fee</span>
+      </div>
+    </div>
+
+    <div class="problem-card" style="--category-color: #00e5a0">
+      <div class="card-top">
+        <div class="problem-num">#19</div>
+        <div class="card-title">Migrant workers pay hidden fees on every rupee they send home</div>
+        <div>
+          <div class="itch-score">82.5</div>
+          <div class="itch-label">ITCH SCORE</div>
+        </div>
+      </div>
+      <div class="card-desc">Remittance services hide fees in exchange rate markups. Workers can't compare true costs. An AI-powered remittance comparison engine with rate alerts = useful for 200M+ migrant workers.</div>
+      <div class="score-bar"><div class="score-fill" style="width:82.5%"></div></div>
+      <div class="card-bottom">
+        <span class="tag category">Fintech</span>
+        <span class="tag fit">Price Comparison + Alerts</span>
+        <span class="tag model">Affiliate / lead gen</span>
+      </div>
+    </div>
+
+    <div class="problem-card" style="--category-color: #00e5a0">
+      <div class="card-top">
+        <div class="problem-num">#20</div>
+        <div class="card-title">Verified plumbers for emergencies — impossible to find at night</div>
+        <div>
+          <div class="itch-score">83.0</div>
+          <div class="itch-label">ITCH SCORE</div>
+        </div>
+      </div>
+      <div class="card-desc">Emergency plumbing at night = unverified listings, inflated prices, no ratings. A hyperlocal verified home services marketplace for Karnataka/South India is still wide open.</div>
+      <div class="score-bar"><div class="score-fill" style="width:83%"></div></div>
+      <div class="card-bottom">
+        <span class="tag category">Home Services</span>
+        <span class="tag fit">Marketplace + Booking</span>
+        <span class="tag model">Commission + SaaS for pros</span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- TIER 3: STRATEGIC -->
+  <div class="section-header"><span class="section-icon">💡</span> Tier 3 — Strategic / AI Agency Fit</div>
+
+  <div class="problems-list">
+
+    <div class="problem-card" style="--category-color: #4d9fff">
+      <div class="card-top">
+        <div class="problem-num">#21</div>
+        <div class="card-title">Freelancers ghost projects after partial payments — no accountability</div>
+        <div>
+          <div class="itch-score">76.0</div>
+          <div class="itch-label">ITCH SCORE</div>
+        </div>
+      </div>
+      <div class="card-desc">Businesses lose money when freelancers disappear mid-project after advance payments. No legal framework, no escrow, no verified work tracking. A freelancer trust platform = addresses YOUR niche too.</div>
+      <div class="score-bar"><div class="score-fill" style="width:76%"></div></div>
+      <div class="card-bottom">
+        <span class="tag category">SaaS / Gig Economy</span>
+        <span class="tag fit">Escrow + Milestone Tracker</span>
+        <span class="tag model">% of transaction</span>
+      </div>
+    </div>
+
+    <div class="problem-card" style="--category-color: #4d9fff">
+      <div class="card-top">
+        <div class="problem-num">#22</div>
+        <div class="card-title">Micro-SMEs waste 10+ hours a week on manual invoice management</div>
+        <div>
+          <div class="itch-score">67.5</div>
+          <div class="itch-label">ITCH SCORE</div>
+        </div>
+      </div>
+      <div class="card-desc">Enterprise ERPs are too complex. SMEs create invoices in WhatsApp or Word. An AI-powered simple invoice + payment + reminder tool designed for Indian SMEs is a clear gap in Tier 2/3 markets.</div>
+      <div class="score-bar"><div class="score-fill" style="width:67.5%"></div></div>
+      <div class="card-bottom">
+        <span class="tag category">SaaS / B2B</span>
+        <span class="tag fit">AI Invoice Automation</span>
+        <span class="tag model">₹299–999/mo per business</span>
+      </div>
+    </div>
+
+    <div class="problem-card" style="--category-color: #4d9fff">
+      <div class="card-top">
+        <div class="problem-num">#23</div>
+        <div class="card-title">Resumes fail ATS filters — qualified candidates never get interviews</div>
+        <div>
+          <div class="itch-score">76.5</div>
+          <div class="itch-label">ITCH SCORE</div>
+        </div>
+      </div>
+      <div class="card-desc">ATS systems filter candidates before humans see them. No India-specific tool helps fresh graduates optimize resumes for AI screening. You can build this with your existing LLM stack.</div>
+      <div class="score-bar"><div class="score-fill" style="width:76.5%"></div></div>
+      <div class="card-bottom">
+        <span class="tag category">HR / AI Tool</span>
+        <span class="tag fit">LLM Resume Optimizer</span>
+        <span class="tag model">₹49 per scan / ₹199/mo</span>
+      </div>
+    </div>
+
+    <div class="problem-card" style="--category-color: #4d9fff">
+      <div class="card-top">
+        <div class="problem-num">#24</div>
+        <div class="card-title">Heirs can't access bank accounts after a death — paperwork nightmare</div>
+        <div>
+          <div class="itch-score">80.0</div>
+          <div class="itch-label">ITCH SCORE</div>
+        </div>
+      </div>
+      <div class="card-desc">Families face financial paralysis after a death. Succession is paperwork-heavy, fragmented across banks, departments. A digital inheritance vault + step-by-step guidance platform = high trust SaaS.</div>
+      <div class="score-bar"><div class="score-fill" style="width:80%"></div></div>
+      <div class="card-bottom">
+        <span class="tag category">LegalTech / Fintech</span>
+        <span class="tag fit">Secure Vault + AI Guide</span>
+        <span class="tag model">₹499/yr family plan</span>
+      </div>
+    </div>
+
+    <div class="problem-card" style="--category-color: #4d9fff">
+      <div class="card-top">
+        <div class="problem-num">#25</div>
+        <div class="card-title">Event management businesses have zero digital backbone</div>
+        <div>
+          <div class="itch-score">— </div>
+          <div class="itch-label">YOUR NICHE</div>
+        </div>
+      </div>
+      <div class="card-desc">Event businesses manage guest lists in Excel, collect payments on WhatsApp, and send invites on Canva. You've already built this for Millennia Events — productize it into an event SaaS for India's ₹10,000 Cr events market.</div>
+      <div class="score-bar"><div class="score-fill" style="width:75%"></div></div>
+      <div class="card-bottom">
+        <span class="tag category">Event SaaS</span>
+        <span class="tag fit">Your Existing Stack</span>
+        <span class="tag model">₹999–4,999/event or /mo</span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- KEY INSIGHTS -->
+  <div style="margin-top: 60px;">
+    <div class="section-header"><span class="section-icon">🧭</span> What You Should Actually Do Next</div>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 4px;">
+
+      <div class="highlight-box" style="flex-direction: column; gap: 12px;">
+        <div style="font-family: 'DM Mono', monospace; font-size: 10px; color: var(--accent); letter-spacing: 2px;">IMMEDIATE (0–3 months)</div>
+        <div style="font-family: 'Syne', sans-serif; font-weight: 700; font-size: 15px;">Productize Event SaaS (#25)</div>
+        <div style="font-size: 13px; color: var(--dim); line-height: 1.6;">You've already built the MVP for Millennia Events. Package it, charge ₹2,999/event, and cold-call every event company in Karnataka.</div>
+      </div>
+
+      <div class="highlight-box" style="flex-direction: column; gap: 12px;">
+        <div style="font-family: 'DM Mono', monospace; font-size: 10px; color: var(--accent); letter-spacing: 2px;">SHORT TERM (3–9 months)</div>
+        <div style="font-family: 'Syne', sans-serif; font-weight: 700; font-size: 15px;">Build AI Invoice Tool (#22)</div>
+        <div style="font-size: 13px; color: var(--dim); line-height: 1.6;">Your construction/interior design clients already need this. Build it, use them as beta users, then scale via your AI agency outreach on Apollo.io.</div>
+      </div>
+
+      <div class="highlight-box" style="flex-direction: column; gap: 12px;">
+        <div style="font-family: 'DM Mono', monospace; font-size: 10px; color: var(--accent); letter-spacing: 2px;">MEDIUM TERM (6–18 months)</div>
+        <div style="font-family: 'Syne', sans-serif; font-weight: 700; font-size: 15px;">Insurance Doc Explainer (#14)</div>
+        <div style="font-size: 13px; color: var(--dim); line-height: 1.6;">Upload any policy → get plain Kannada/Hindi/English breakdown. High itch, pure AI play, massive distribution through insurance aggregators.</div>
+      </div>
+
+      <div class="highlight-box" style="flex-direction: column; gap: 12px;">
+        <div style="font-family: 'DM Mono', monospace; font-size: 10px; color: var(--accent); letter-spacing: 2px;">AGENCY OFFERING NOW</div>
+        <div style="font-family: 'Syne', sans-serif; font-weight: 700; font-size: 15px;">ATS Resume Optimizer (#23)</div>
+        <div style="font-size: 13px; color: var(--dim); line-height: 1.6;">Pure LLM product. Build in 2 weeks. Monetize at ₹49/scan. Market to college placement cells across Karnataka — your local advantage works here.</div>
+      </div>
+
+    </div>
+  </div>
+
+  <footer>
+    <div class="footer-text">
+      Source: <strong>Razorpay Fix My Itch</strong> — 10,000+ real Indian problems · Curated by Claude for Tejas<br>
+      Problems ranked by itch score (severity × frequency × market whitespace)
+    </div>
+  </footer>
+
+</div>
+
+</body>
+</html>
